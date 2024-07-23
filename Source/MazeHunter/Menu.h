@@ -15,7 +15,7 @@ class MAZEHUNTER_API UMenu : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
-	void MenuSetup();
+	void MenuSetup(FString LobbyPath);
 
 protected:
 	virtual bool Initialize() override;
@@ -27,4 +27,6 @@ private:
 	
 	UFUNCTION()
 	void PlayButtonClicked();
+
+	FString PathToLobby;
 };

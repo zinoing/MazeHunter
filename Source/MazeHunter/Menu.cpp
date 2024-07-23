@@ -4,8 +4,10 @@
 #include "Menu.h"
 #include "Components/Button.h"
 
-void UMenu::MenuSetup()
+void UMenu::MenuSetup(FString LobbyPath)
 {
+	PathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
+
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 
@@ -46,5 +48,10 @@ void UMenu::PlayButtonClicked()
 			FColor::Blue,
 			FString(TEXT("Play Button Clicked!"))
 		);
+	}
+
+	if (APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController())
+	{
+		PlayerController->ClientTravel(PathToLobby, TRAVEL_Absolute);
 	}
 }
