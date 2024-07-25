@@ -3,6 +3,8 @@
 
 #include "Item.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
+#include "MazeHunter/Character/MazeHunterCharacter.h"
 
 AItem::AItem()
 {
@@ -21,6 +23,9 @@ AItem::AItem()
 	AreaSphere->SetupAttachment(RootComponent);
 	AreaSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
+	PickupWidget->SetupAttachment(RootComponent);
 }
 
 void AItem::BeginPlay()
@@ -30,8 +35,20 @@ void AItem::BeginPlay()
 	if (HasAuthority()) {
 		AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSphereOverlap);
 	}
 	
+	if (PickupWidget) {
+		PickupWidget->SetVisibility(false);
+	}
+}
+
+void AItem::OnSphereOverlap(UPrimitiveComponent* OVerlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AMazeHunterCharacter* MazeHunterCharacter = Cast<AMazeHunterCharacter>(OtherActor);
+	if (MazeHunterCharacter && PickupWidget) {
+		PickupWidget->SetVisibility(true);
+	}
 }
 
 void AItem::Tick(float DeltaTime)
