@@ -32,7 +32,7 @@ protected:
 		UPrimitiveComponent* OVerlappedComponent,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
+		int32 OtherBoDyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult);
 
