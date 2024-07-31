@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Block.generated.h"
 
-struct Coord {
+struct Coordinate {
     int Y;
     int X;
 };
@@ -27,7 +27,7 @@ private:
         {1, 1, 1}
     };
 
-    Coord Center;
+    Coordinate Center;
     bool Visited;
 
 public:
@@ -37,7 +37,7 @@ public:
 
     void SetCenter(int Y, int X);
 
-    Coord GetCenter();
+    Coordinate GetCenter();
 
     bool IsVisited();
 

@@ -4,9 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Block.h"
 #include "Maze.generated.h"
 
 class ABlock;
+
+struct CoordWithDirection{
+	Coordinate Coord;
+	int Direction;
+};
 
 UCLASS()
 class MAZEHUNTER_API AMaze : public AActor

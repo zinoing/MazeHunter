@@ -69,56 +69,56 @@ void AMaze::SetDestination(int Radius)
 
 void AMaze::CreatePattern(int DestinationRadius)
 {
-    TArray<Coord> Coords;
+    TArray<CoordWithDirection> Coords;
 
     // Start from the Center block
-    Coords.Add(Coord(NumOfBlocksSide / 2 + 1, NumOfBlocksSide / 2 + 1));
+    CoordWithDirection CoordDir = CoordWithDirection(Coordinate(NumOfBlocksSide / 2 + 1, NumOfBlocksSide / 2 + 1), -1);
+    Coords.Add(CoordDir);
 
-    for (int i = 0; i < NumOfBlocksSide; ++i) {
-        for (int j = 0; j < NumOfBlocksSide; ++j) {
+    while (Coords.Num() != 0) {
+        CoordDir = Coords.Last();
+        Coords.Pop();
 
-            if (Blocks[i][j]->IsVisited())
+        Coordinate CoordToVisit = CoordDir.Coord;
+        int CurrentDir = CoordDir.Direction;
+
+        if (Blocks[CoordToVisit.Y][CoordToVisit.X]->IsVisited())
+            continue;
+
+        if(CurrentDir != -1)
+            Blocks[CoordToVisit.Y][CoordToVisit.X]->DrawRoad((CurrentDir + 2) % 4, Map, HeightOfMaze, WidthOfMaze);
+
+        Blocks[CoordToVisit.Y][CoordToVisit.X]->Visit();
+
+        // Choose where to move
+        TArray<int> Directions = { 0, 1, 2, 3 };
+
+        // shuffle
+        const int32 LastIndex = Directions.Num() - 1;
+        for (int32 k = 0; k < LastIndex; ++k)
+        {
+            int32 Index = FMath::RandRange(0, LastIndex);
+            if (k != Index)
+            {
+                Directions.Swap(k, Index);
+            }
+        }
+
+        int Dy[4] = { 0, -1, 0, 1 };
+        int Dx[4] = { -1, 0, 1, 0 };
+
+        for (int dir : Directions) {
+            int y = CoordToVisit.Y + Dy[dir];
+            int x = CoordToVisit.X + Dx[dir];
+
+            if (y >= NumOfBlocksSide || y < 0 || x >= NumOfBlocksSide || x < 0) {
+                continue;
+            }
+
+            if (Blocks[y][x]->IsVisited())
                 continue;
 
-            Coords.Add(Coord(i, j));
-
-            while (Coords.Num() != 0) {
-                Coord CoordToVisit = Coords[0];
-                Coords.RemoveAt(0);
-                Blocks[CoordToVisit.Y][CoordToVisit.X]->Visit();
-
-                // Choose where to move
-                TArray<int> Directions = { 0, 1, 2, 3 };
-
-                // shuffle
-                const int32 LastIndex = Directions.Num() - 1;
-                for (int32 k = 0; k < LastIndex; ++k)
-                {
-                    int32 Index = FMath::RandRange(0, LastIndex);
-                    if (k != Index)
-                    {
-                        Directions.Swap(k, Index);
-                    }
-                }
-
-                int Dy[4] = { 0, -1, 0, 1 };
-                int Dx[4] = { -1, 0, 1, 0 };
-
-                for (int dir : Directions) {
-                    int y = CoordToVisit.Y + Dy[dir];
-                    int x = CoordToVisit.X + Dx[dir];
-
-                    if (y >= NumOfBlocksSide || y < 0 || x >= NumOfBlocksSide || x < 0) {
-                        continue;
-                    }
-
-                    if (Blocks[y][x]->IsVisited()) continue;
-                    
-                    Blocks[CoordToVisit.Y][CoordToVisit.X]->DrawRoad(dir, Map, HeightOfMaze, WidthOfMaze);
-                    Coords.Add(Coord(y, x));
-                    break;
-                }
-            }
+            Coords.Add(CoordWithDirection(Coordinate(y, x), dir));
         }
     }
 

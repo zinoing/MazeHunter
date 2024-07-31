@@ -4,7 +4,7 @@
 #include "Block.h"
 
 ABlock::ABlock() : Visited(false) {
-    Center = Coord(-1, -1);
+    Center = Coordinate(-1, -1);
     PrimaryActorTick.bCanEverTick = false;
 }
 
@@ -20,7 +20,7 @@ void ABlock::SetCenter(int Y, int X)
     Center.X = X;
 }
 
-Coord ABlock::GetCenter()
+Coordinate ABlock::GetCenter()
 {
     return Center;
 }
