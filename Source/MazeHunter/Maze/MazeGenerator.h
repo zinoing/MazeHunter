@@ -16,10 +16,11 @@ public:
 	AMazeGenerator();
 
 	UFUNCTION(BlueprintCallable, Category = "Maze")
-	void Generate(int MazeHeight, int MazeWidth);
+	void Generate(int MazeHeight, int MazeWidth, int DestinationRadius);
 
-private:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<AActor> Cube;
+private:
+	
 
 };

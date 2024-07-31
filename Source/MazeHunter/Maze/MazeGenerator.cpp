@@ -12,24 +12,37 @@ AMazeGenerator::AMazeGenerator()
 
 }
 
-void AMazeGenerator::Generate(int MazeHeight, int MazeWidth)
+void AMazeGenerator::Generate(int MazeHeight, int MazeWidth, int DestinationRadius)
 {
-	AMaze Maze(MazeHeight, MazeWidth);
-	Maze.Initialize();
-	Maze.CreatePattern();
+	if (UWorld* World = GetWorld()) // Check if World is valid
+	{
+		// Define spawn parameters
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	FActorSpawnParameters SpawnParams;
-	FVector Loc;
-	FRotator Rot;
+		// Spawn the actor
+		AMaze* Maze = World->SpawnActor<AMaze>(AMaze::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 
-	UWorld* World = GetWorld();
-	int** Map = Maze.GetMap();
+		if (Maze)
+		{
+			// Initialize maze parameters
+			Maze->Initialize(MazeHeight, MazeWidth);
+			Maze->CreatePattern(DestinationRadius);
 
-	for (int i = 0; i < MazeHeight; i++) {
-		for (int j = 0; j < MazeWidth; j++) {
-			if (Map[i][j] == 0) continue;
+			FRotator Rot;
 
-			World->SpawnActor<AActor>(Cube, FVector(i, j, 0.0f), Rot, SpawnParams);
+			TArray< TArray<int>> Map = Maze->GetMap();
+
+			for (int i = 0; i < MazeHeight; i++) {
+				for (int j = 0; j < MazeWidth; j++) {
+					
+					if (Map[i][j] == 0) continue;
+					if (Map[i][j] == 2) continue;
+
+					float lengthOfCube = 100.0f;
+					World->SpawnActor<AActor>(Cube, FVector(-5000 + i * lengthOfCube, -5000 + j * lengthOfCube, lengthOfCube / 2), Rot, SpawnParams);
+				}
+			}
 		}
 	}
 }

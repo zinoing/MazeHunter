@@ -35,10 +35,10 @@ void ABlock::Visit()
     Visited = true;
 }
 
-void ABlock::DrawRoad(int Dir, int** Map, int MazeHeight, int MazeWidth)
+void ABlock::DrawRoad(int Dir, TArray< TArray<int>>& Map, int MazeHeight, int MazeWidth)
 {
-    int Dy[4] = { 0, 0, -1, 1 };
-    int Dx[4] = { -1, 1, 0, 0 };
+    int Dy[4] = { 0, -1, 0, 1 };
+    int Dx[4] = { -1, 0, 1, 0 };
 
     for (int i = 1; i <= 2; ++i) {
         int y = Center.Y + i * Dy[Dir];
@@ -52,7 +52,7 @@ void ABlock::DrawRoad(int Dir, int** Map, int MazeHeight, int MazeWidth)
     }
 }
 
-void ABlock::Draw(int** Map)
+void ABlock::Draw(TArray< TArray<int>>& Map)
 {
     int y = Center.Y - 1;
     int x = Center.X - 1;

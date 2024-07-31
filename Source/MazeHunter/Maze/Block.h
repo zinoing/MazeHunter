@@ -43,7 +43,7 @@ public:
 
     void Visit();
 
-    void DrawRoad(int Dir, int** Map, int MazeHeight, int MazeWidth);
+    void DrawRoad(int Dir, TArray< TArray<int>>& Map, int MazeHeight, int MazeWidth);
 
-    void Draw(int** Map);
+    void Draw(TArray< TArray<int>>& Map);
 };

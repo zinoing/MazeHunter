@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Maze.generated.h"
 
+class ABlock;
+
 UCLASS()
 class MAZEHUNTER_API AMaze : public AActor
 {
@@ -16,20 +18,19 @@ private:
 	int WidthOfMaze;
 	int NumOfBlocksSide;
 
-	int** Map;
-	class ABlock** Blocks;
+	TArray< TArray<int>> Map;
+	TArray<TArray<ABlock*>> Blocks;
 
 public:
 	AMaze();
+	~AMaze();
 
-	AMaze(int MazeHeight, int MazeWidth);
+	TArray< TArray<int>> GetMap() { return Map; }
 
-	int** GetMap() { return Map; }
-
-	void Initialize();
+	void Initialize(int MazeHeight, int MazeWidth);
 
 	void SetDestination(int Radius);
 
-	void CreatePattern();
+	void CreatePattern(int DestinationRadius);
 
 };
