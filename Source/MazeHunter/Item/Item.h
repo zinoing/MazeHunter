@@ -23,7 +23,7 @@ class MAZEHUNTER_API AItem : public AActor
 public:	
 	AItem();
 	virtual void Tick(float DeltaTime) override;
-
+	void ShowPickupWidget(bool bShowWidget);
 protected:
 	virtual void BeginPlay() override;
 
@@ -35,6 +35,13 @@ protected:
 		int32 OtherBoDyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnSphereEndOverlap(
+		UPrimitiveComponent* OVerlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBoDyIndex);
 
 private:	
 	UPROPERTY(VisibleAnywhere, Category = "Item Properties")

@@ -36,6 +36,7 @@ void AItem::BeginPlay()
 		AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSphereOverlap);
+		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnSphereEndOverlap);
 	}
 	
 	if (PickupWidget) {
@@ -46,8 +47,16 @@ void AItem::BeginPlay()
 void AItem::OnSphereOverlap(UPrimitiveComponent* OVerlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBoDyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AMazeHunterCharacter* MazeHunterCharacter = Cast<AMazeHunterCharacter>(OtherActor);
-	if (MazeHunterCharacter && PickupWidget) {
-		PickupWidget->SetVisibility(true);
+	if (MazeHunterCharacter) {
+		MazeHunterCharacter->SetOverlappingItem(this);
+	}
+}
+
+void AItem::OnSphereEndOverlap(UPrimitiveComponent* OVerlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBoDyIndex)
+{
+	AMazeHunterCharacter* MazeHunterCharacter = Cast<AMazeHunterCharacter>(OtherActor);
+	if (MazeHunterCharacter) {
+		MazeHunterCharacter->SetOverlappingItem(nullptr);
 	}
 }
 
@@ -55,5 +64,12 @@ void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AItem::ShowPickupWidget(bool bShowWidget)
+{
+	if (PickupWidget) {
+		PickupWidget->SetVisibility(bShowWidget);
+	}
 }
 

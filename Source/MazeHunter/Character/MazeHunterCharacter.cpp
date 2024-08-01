@@ -5,6 +5,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "MazeHunter/Item/Item.h"
 
 AMazeHunterCharacter::AMazeHunterCharacter()
 {
@@ -22,9 +24,38 @@ AMazeHunterCharacter::AMazeHunterCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
+
+void AMazeHunterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AMazeHunterCharacter, OverlappingItem, COND_OwnerOnly);
+}
+
 void AMazeHunterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AMazeHunterCharacter::OnRep_OverlappingItem(AItem* LastItem)
+{
+	if (OverlappingItem) {
+		OverlappingItem->ShowPickupWidget(true);
+	}
+
+	if(LastItem) {
+		LastItem->ShowPickupWidget(false);
+	}
+}
+
+void AMazeHunterCharacter::SetOverlappingItem(AItem* Item)
+{
+	OverlappingItem = Item;
+	if (IsLocallyControlled()) {
+		if (OverlappingItem) {
+			OverlappingItem->ShowPickupWidget(true);
+		}
+	}
 }
 
 void AMazeHunterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -32,6 +63,7 @@ void AMazeHunterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ThisClass::EquipItem);
 
 	PlayerInputComponent->BindAxis("MoveForward", this,  &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -46,6 +78,11 @@ void AMazeHunterCharacter::MoveForward(float Value)
 		const FVector Direction(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void AMazeHunterCharacter::EquipItem()
+{
+
 }
 
 void AMazeHunterCharacter::MoveRight(float Value)
@@ -70,5 +107,4 @@ void AMazeHunterCharacter::LookUp(float Value)
 void AMazeHunterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
