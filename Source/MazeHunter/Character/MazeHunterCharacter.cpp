@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "MazeHunter/Item/Item.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Components/SphereComponent.h"
 
 AMazeHunterCharacter::AMazeHunterCharacter()
 {
@@ -50,12 +52,24 @@ void AMazeHunterCharacter::OnRep_OverlappingItem(AItem* LastItem)
 
 void AMazeHunterCharacter::SetOverlappingItem(AItem* Item)
 {
+	if (OverlappingItem) {
+		OverlappingItem->ShowPickupWidget(false);
+	}
+
 	OverlappingItem = Item;
+
 	if (IsLocallyControlled()) {
 		if (OverlappingItem) {
 			OverlappingItem->ShowPickupWidget(true);
 		}
 	}
+}
+
+bool AMazeHunterCharacter::IsItemEquipped()
+{
+	if (EquippedItem)
+		return true;
+	return false;
 }
 
 void AMazeHunterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -80,9 +94,35 @@ void AMazeHunterCharacter::MoveForward(float Value)
 	}
 }
 
-void AMazeHunterCharacter::EquipItem()
+void AMazeHunterCharacter::EquipItem_Implementation()
 {
+	if (OverlappingItem == nullptr) return;
 
+	/*if (HasAuthority()) {
+		EquippedItem = OverlappingItem;
+		EquippedItem->SetItemState(EItemState::EIS_Equipped);
+
+		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
+		if (HandSocket) {
+			HandSocket->AttachActor(EquippedItem, GetMesh());
+		}
+
+		EquippedItem->ShowPickupWidget(false);
+		EquippedItem->GetAreaSphere()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	else {
+		ServerEquipItem();
+	}*/
+	EquippedItem = OverlappingItem;
+	EquippedItem->SetItemState(EItemState::EIS_Equipped);
+
+	const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
+	if (HandSocket) {
+		HandSocket->AttachActor(EquippedItem, GetMesh());
+	}
+
+	EquippedItem->ShowPickupWidget(false);
+	EquippedItem->GetAreaSphere()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AMazeHunterCharacter::MoveRight(float Value)

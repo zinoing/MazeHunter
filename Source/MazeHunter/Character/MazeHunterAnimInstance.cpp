@@ -27,4 +27,5 @@ void UMazeHunterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	Speed = Velocity.Size();
 	bIsInAir = MazeHunterCharacter->GetCharacterMovement()->IsFalling();
 	bIsAccelerating = MazeHunterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? true : false;
+	bItemEquipped = MazeHunterCharacter->IsItemEquipped();
 }

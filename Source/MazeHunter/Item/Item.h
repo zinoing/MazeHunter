@@ -24,6 +24,7 @@ public:
 	AItem();
 	virtual void Tick(float DeltaTime) override;
 	void ShowPickupWidget(bool bShowWidget);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -55,4 +56,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Item Properties")
 	class UWidgetComponent* PickupWidget;
+
+public:
+	FORCEINLINE void SetItemState(EItemState State) { ItemState = State; }
+	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }
 };

@@ -16,14 +16,21 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
+	FORCEINLINE void SetOverlappingItem(AItem* Item);
+	UFUNCTION()
+	bool IsItemEquipped();
 protected:
 	void MoveForward(float Value);
+	UFUNCTION(Server, Reliable)
 	void EquipItem();
 	void MoveRight(float Value);
 	void Turn(float Value);
 	void LookUp(float Value);
 	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION()
+	void OnRep_OverlappingItem(AItem* LastItem);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -35,9 +42,5 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingItem)
 	class AItem* OverlappingItem;
 
-	UFUNCTION()
-	void OnRep_OverlappingItem(AItem* LastItem);
-
-public:
-	FORCEINLINE void SetOverlappingItem(AItem* Item);
+	AItem* EquippedItem;
 };
