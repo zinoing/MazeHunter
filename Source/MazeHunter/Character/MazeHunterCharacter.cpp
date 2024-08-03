@@ -8,7 +8,7 @@
 #include "Net/UnrealNetwork.h"
 #include "MazeHunter/Item/Item.h"
 #include "Engine/SkeletalMeshSocket.h"
-#include "Components/SphereComponent.h"
+#include "MazeHunter/MazeHunterComponents/OnHandComponent.h"
 
 AMazeHunterCharacter::AMazeHunterCharacter()
 {
@@ -24,6 +24,10 @@ AMazeHunterCharacter::AMazeHunterCharacter()
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	OnHand = CreateDefaultSubobject<UOnHandComponent>("OnHand");
+	OnHand->SetIsReplicated(true);
+	OnHand->Character = this;
 }
 
 
@@ -67,9 +71,7 @@ void AMazeHunterCharacter::SetOverlappingItem(AItem* Item)
 
 bool AMazeHunterCharacter::IsItemEquipped()
 {
-	if (EquippedItem)
-		return true;
-	return false;
+	return (OnHand && OnHand->EquippedItem);
 }
 
 void AMazeHunterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -94,35 +96,25 @@ void AMazeHunterCharacter::MoveForward(float Value)
 	}
 }
 
-void AMazeHunterCharacter::EquipItem_Implementation()
+void AMazeHunterCharacter::EquipItem()
 {
 	if (OverlappingItem == nullptr) return;
 
-	/*if (HasAuthority()) {
-		EquippedItem = OverlappingItem;
-		EquippedItem->SetItemState(EItemState::EIS_Equipped);
-
-		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
-		if (HandSocket) {
-			HandSocket->AttachActor(EquippedItem, GetMesh());
+	if (OnHand) {
+		if (HasAuthority()) {
+			OnHand->EquipItem(OverlappingItem);
 		}
-
-		EquippedItem->ShowPickupWidget(false);
-		EquippedItem->GetAreaSphere()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		else {
+			ServerEquipItem();
+		}
 	}
-	else {
-		ServerEquipItem();
-	}*/
-	EquippedItem = OverlappingItem;
-	EquippedItem->SetItemState(EItemState::EIS_Equipped);
+}
 
-	const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
-	if (HandSocket) {
-		HandSocket->AttachActor(EquippedItem, GetMesh());
+void AMazeHunterCharacter::ServerEquipItem_Implementation()
+{
+	if (OnHand) {
+		OnHand->EquipItem(OverlappingItem);
 	}
-
-	EquippedItem->ShowPickupWidget(false);
-	EquippedItem->GetAreaSphere()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AMazeHunterCharacter::MoveRight(float Value)

@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "MazeHunter/Character/MazeHunterCharacter.h"
+#include "Net/UnrealNetwork.h"
 
 AItem::AItem()
 {
@@ -60,6 +61,16 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OVerlappedComponent, AActor*
 	}
 }
 
+void AItem::OnRep_ItemState()
+{
+	switch (ItemState) {
+	case EItemState::EIS_Equipped:
+		ShowPickupWidget(false);
+		break;
+
+	}
+}
+
 void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -70,6 +81,25 @@ void AItem::ShowPickupWidget(bool bShowWidget)
 {
 	if (PickupWidget) {
 		PickupWidget->SetVisibility(bShowWidget);
+	}
+}
+
+void AItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AItem, ItemState);
+}
+
+void AItem::SetItemState(EItemState State)
+{
+	ItemState = State;
+
+	switch (ItemState) {
+	case EItemState::EIS_Equipped:
+		ShowPickupWidget(false);
+		AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
 	}
 }
 

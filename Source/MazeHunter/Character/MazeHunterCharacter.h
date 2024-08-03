@@ -21,7 +21,6 @@ public:
 	bool IsItemEquipped();
 protected:
 	void MoveForward(float Value);
-	UFUNCTION(Server, Reliable)
 	void EquipItem();
 	void MoveRight(float Value);
 	void Turn(float Value);
@@ -31,6 +30,9 @@ protected:
 private:
 	UFUNCTION()
 	void OnRep_OverlappingItem(AItem* LastItem);
+
+	UFUNCTION(Server, Reliable)
+	void ServerEquipItem();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -42,5 +44,6 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingItem)
 	class AItem* OverlappingItem;
 
-	AItem* EquippedItem;
+	UPROPERTY(VisibleAnywhere)
+	class UOnHandComponent* OnHand;
 };

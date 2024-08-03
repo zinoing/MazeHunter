@@ -24,6 +24,7 @@ public:
 	AItem();
 	virtual void Tick(float DeltaTime) override;
 	void ShowPickupWidget(bool bShowWidget);
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -51,13 +52,16 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Item Properties")
 	class USphereComponent* AreaSphere;
 
-	UPROPERTY(VisibleAnywhere, Category = "Item Properties")
+	UPROPERTY(ReplicatedUsing = OnRep_ItemState, VisibleAnywhere, Category = "Item Properties")
 	EItemState ItemState;
 
 	UPROPERTY(VisibleAnywhere, Category = "Item Properties")
 	class UWidgetComponent* PickupWidget;
 
+	UFUNCTION()
+	void OnRep_ItemState();
+
 public:
-	FORCEINLINE void SetItemState(EItemState State) { ItemState = State; }
+	FORCEINLINE void SetItemState(EItemState State);
 	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }
 };
