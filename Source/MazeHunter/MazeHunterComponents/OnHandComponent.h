@@ -22,7 +22,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
+	void SetAiming(bool bIsAiming) { bAiming = bIsAiming; }
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -31,4 +31,7 @@ private:
 
 	UPROPERTY(Replicated)
 	AItem* EquippedItem;
+
+	UPROPERTY(Replicated)
+	bool bAiming;
 };

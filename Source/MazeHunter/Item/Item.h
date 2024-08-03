@@ -60,7 +60,6 @@ private:
 
 	UFUNCTION()
 	void OnRep_ItemState();
-
 public:
 	FORCEINLINE void SetItemState(EItemState State);
 	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }

@@ -28,6 +28,8 @@ AMazeHunterCharacter::AMazeHunterCharacter()
 	OnHand = CreateDefaultSubobject<UOnHandComponent>("OnHand");
 	OnHand->SetIsReplicated(true);
 	OnHand->Character = this;
+
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 
@@ -74,12 +76,20 @@ bool AMazeHunterCharacter::IsItemEquipped()
 	return (OnHand && OnHand->EquippedItem);
 }
 
+bool AMazeHunterCharacter::IsAiming()
+{
+	return (OnHand && OnHand->bAiming);
+}
+
 void AMazeHunterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ThisClass::EquipItem);
+	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ThisClass::EquipButtonPressed);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ThisClass::CrouchButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ThisClass::AimButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ThisClass::AimButtonReleased);
 
 	PlayerInputComponent->BindAxis("MoveForward", this,  &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -87,16 +97,7 @@ void AMazeHunterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUp", this, &ThisClass::LookUp);
 }
 
-void AMazeHunterCharacter::MoveForward(float Value)
-{
-	if (Controller != nullptr && Value != 0.f) {
-		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
-		const FVector Direction(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
-		AddMovementInput(Direction, Value);
-	}
-}
-
-void AMazeHunterCharacter::EquipItem()
+void AMazeHunterCharacter::EquipButtonPressed()
 {
 	if (OverlappingItem == nullptr) return;
 
@@ -110,10 +111,43 @@ void AMazeHunterCharacter::EquipItem()
 	}
 }
 
+void AMazeHunterCharacter::CrouchButtonPressed()
+{
+	if (bIsCrouched) {
+		Super::UnCrouch();
+	}
+	else {
+		Super::Crouch();
+	}
+}
+
+void AMazeHunterCharacter::AimButtonPressed()
+{
+	if (OnHand) {
+		OnHand->SetAiming(true);
+	}
+}
+
+void AMazeHunterCharacter::AimButtonReleased()
+{
+	if (OnHand) {
+		OnHand->SetAiming(false);
+	}
+}
+
 void AMazeHunterCharacter::ServerEquipItem_Implementation()
 {
 	if (OnHand) {
 		OnHand->EquipItem(OverlappingItem);
+	}
+}
+
+void AMazeHunterCharacter::MoveForward(float Value)
+{
+	if (Controller != nullptr && Value != 0.f) {
+		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
+		const FVector Direction(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
+		AddMovementInput(Direction, Value);
 	}
 }
 

@@ -19,9 +19,15 @@ public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item);
 	UFUNCTION()
 	bool IsItemEquipped();
+	UFUNCTION()
+	bool IsAiming();
 protected:
+	void EquipButtonPressed();
+	void CrouchButtonPressed();
+	void AimButtonPressed();
+	void AimButtonReleased();
+
 	void MoveForward(float Value);
-	void EquipItem();
 	void MoveRight(float Value);
 	void Turn(float Value);
 	void LookUp(float Value);

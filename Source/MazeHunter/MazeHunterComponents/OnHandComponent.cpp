@@ -8,7 +8,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Components/SphereComponent.h"
 
-UOnHandComponent::UOnHandComponent()
+UOnHandComponent::UOnHandComponent() : bAiming(false)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -36,7 +36,6 @@ void UOnHandComponent::EquipItem(AItem* OverlappingItem)
 }
 
 
-// Called when the game starts
 void UOnHandComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -44,10 +43,8 @@ void UOnHandComponent::BeginPlay()
 }
 
 
-// Called every frame
 void UOnHandComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
