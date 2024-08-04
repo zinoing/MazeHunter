@@ -18,6 +18,7 @@ void UOnHandComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UOnHandComponent, EquippedItem);
+	DOREPLIFETIME(UOnHandComponent, bAiming);
 }
 
 void UOnHandComponent::EquipItem(AItem* OverlappingItem)
@@ -42,6 +43,17 @@ void UOnHandComponent::BeginPlay()
 	
 }
 
+void UOnHandComponent::SetAiming(bool bIsAiming)
+{
+	bAiming = bIsAiming;
+	ServerSetAiming(bIsAiming);
+}
+
+
+void UOnHandComponent::ServerSetAiming_Implementation(bool bIsAiming)
+{
+	bAiming = bIsAiming;
+}
 
 void UOnHandComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

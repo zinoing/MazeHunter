@@ -4,6 +4,7 @@
 #include "MazeHunterAnimInstance.h"
 #include "MazeHunterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UMazeHunterAnimInstance::NativeInitializeAnimation()
 {
@@ -30,4 +31,8 @@ void UMazeHunterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	bItemEquipped = MazeHunterCharacter->IsItemEquipped();
 	bIsCrouched = MazeHunterCharacter->bIsCrouched;
 	bAiming = MazeHunterCharacter->IsAiming();
+
+	FRotator AimRotation = MazeHunterCharacter->GetBaseAimRotation();
+	FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(MazeHunterCharacter->GetVelocity());
+	UE_LOG(LogTemp, Warning, TEXT("AimRotation Yaw %f: "), AimRotation.Yaw);
 }

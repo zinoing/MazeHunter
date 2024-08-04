@@ -102,12 +102,13 @@ void AMazeHunterCharacter::EquipButtonPressed()
 	if (OverlappingItem == nullptr) return;
 
 	if (OnHand) {
-		if (HasAuthority()) {
+		/*if (HasAuthority()) {
 			OnHand->EquipItem(OverlappingItem);
 		}
 		else {
 			ServerEquipItem();
-		}
+		}*/
+		ServerEquipItem();
 	}
 }
 
