@@ -7,6 +7,7 @@
 #include "MazeHunter/Character/MazeHunterCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UOnHandComponent::UOnHandComponent() : bAiming(false)
 {
@@ -32,8 +33,10 @@ void UOnHandComponent::EquipItem(AItem* OverlappingItem)
 	}
 
 	EquippedItem->SetOwner(Character);
-	EquippedItem->ShowPickupWidget(false);
-	EquippedItem->GetAreaSphere()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// EquippedItem->ShowPickupWidget(false);
+	// EquippedItem->GetAreaSphere()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+	Character->bUseControllerRotationYaw = true;
 }
 
 
@@ -47,6 +50,14 @@ void UOnHandComponent::SetAiming(bool bIsAiming)
 {
 	bAiming = bIsAiming;
 	ServerSetAiming(bIsAiming);
+}
+
+void UOnHandComponent::OnRep_EuippedItem()
+{
+	if (EquippedItem && Character) {
+		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+		Character->bUseControllerRotationYaw = true;
+	}
 }
 
 

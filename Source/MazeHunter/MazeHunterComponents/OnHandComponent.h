@@ -17,6 +17,7 @@ public:
 	friend class AMazeHunterCharacter;
 
 	UOnHandComponent();
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void EquipItem(AItem* OverlappingItem);
 
@@ -26,13 +27,14 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetAiming(bool bIsAiming);
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	 AMazeHunterCharacter* Character;
 
-	UPROPERTY(Replicated)
+	 UFUNCTION()
+	 void OnRep_EuippedItem();
+
+	UPROPERTY(ReplicatedUsing = OnRep_EuippedItem)
 	AItem* EquippedItem;
 
 	UPROPERTY(Replicated)
