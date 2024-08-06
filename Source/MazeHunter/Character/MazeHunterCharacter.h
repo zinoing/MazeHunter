@@ -21,6 +21,9 @@ public:
 	bool IsItemEquipped();
 	UFUNCTION()
 	bool IsAiming();
+
+	float GetBaseWalkSpeed() { return BaseWalkSpeed; }
+	float GetAimWalkSpeed() { return AimWalkSpeed; }
 protected:
 	void EquipButtonPressed();
 	void CrouchButtonPressed();
@@ -52,4 +55,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UOnHandComponent* OnHand;
+
+	UPROPERTY(EditAnywhere)
+	float BaseWalkSpeed;
+
+	UPROPERTY(EditAnywhere)
+	float AimWalkSpeed;
 };

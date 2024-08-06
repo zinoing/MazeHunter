@@ -50,6 +50,17 @@ void UOnHandComponent::SetAiming(bool bIsAiming)
 {
 	bAiming = bIsAiming;
 	ServerSetAiming(bIsAiming);
+	if (Character) {
+		Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? Character->GetAimWalkSpeed() : Character->GetBaseWalkSpeed();
+	}
+}
+
+void UOnHandComponent::ServerSetAiming_Implementation(bool bIsAiming)
+{
+	bAiming = bIsAiming;
+	if (Character) {
+		Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? Character->GetAimWalkSpeed() : Character->GetBaseWalkSpeed();
+	}
 }
 
 void UOnHandComponent::OnRep_EuippedItem()
@@ -58,12 +69,6 @@ void UOnHandComponent::OnRep_EuippedItem()
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;
 	}
-}
-
-
-void UOnHandComponent::ServerSetAiming_Implementation(bool bIsAiming)
-{
-	bAiming = bIsAiming;
 }
 
 void UOnHandComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

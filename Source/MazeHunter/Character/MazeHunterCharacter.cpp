@@ -9,8 +9,9 @@
 #include "MazeHunter/Item/Item.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "MazeHunter/MazeHunterComponents/OnHandComponent.h"
+#include "Components/CapsuleComponent.h"
 
-AMazeHunterCharacter::AMazeHunterCharacter()
+AMazeHunterCharacter::AMazeHunterCharacter() : BaseWalkSpeed(600.0f), AimWalkSpeed(450.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -30,6 +31,8 @@ AMazeHunterCharacter::AMazeHunterCharacter()
 	OnHand->Character = this;
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
 
@@ -43,6 +46,8 @@ void AMazeHunterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 void AMazeHunterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 }
 
 void AMazeHunterCharacter::OnRep_OverlappingItem(AItem* LastItem)
