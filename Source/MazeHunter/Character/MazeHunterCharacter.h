@@ -29,6 +29,7 @@ protected:
 	void CrouchButtonPressed();
 	void AimButtonPressed();
 	void AimButtonReleased();
+	void AimOffset(float DeltaTime);
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -61,4 +62,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float AimWalkSpeed;
+
+	float AO_Yaw;
+	float AO_Pitch;
+	FRotator StartingAimRotation;
+
+public:
+	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
+	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
 };
