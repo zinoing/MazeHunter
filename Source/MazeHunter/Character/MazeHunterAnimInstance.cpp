@@ -33,6 +33,7 @@ void UMazeHunterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	EquippedItem = MazeHunterCharacter->GetEquippedItem();
 	bIsCrouched = MazeHunterCharacter->bIsCrouched;
 	bAiming = MazeHunterCharacter->IsAiming();
+	TurningInPlace = MazeHunterCharacter->GetTurningInPlace();
 
 	// Offsets Yaw for Strafing
 	FRotator AimRotation = MazeHunterCharacter->GetBaseAimRotation();
