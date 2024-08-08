@@ -5,6 +5,7 @@
 #include "MazeHunterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "MazeHunter/Item/Item.h"
 
 void UMazeHunterAnimInstance::NativeInitializeAnimation()
 {
@@ -29,6 +30,7 @@ void UMazeHunterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	bIsInAir = MazeHunterCharacter->GetCharacterMovement()->IsFalling();
 	bIsAccelerating = MazeHunterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? true : false;
 	bItemEquipped = MazeHunterCharacter->IsItemEquipped();
+	EquippedItem = MazeHunterCharacter->GetEquippedItem();
 	bIsCrouched = MazeHunterCharacter->bIsCrouched;
 	bAiming = MazeHunterCharacter->IsAiming();
 
@@ -48,4 +50,13 @@ void UMazeHunterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	AO_Yaw = MazeHunterCharacter->GetAO_Yaw();
 	AO_Pitch = MazeHunterCharacter->GetAO_Pitch();
+
+	if(bItemEquipped && EquippedItem && EquippedItem->GetItemMesh() && MazeHunterCharacter->GetMesh()) {
+		LeftHandTransform = EquippedItem->GetItemMesh()->GetSocketTransform(FName("LeftHandSocket"), ERelativeTransformSpace::RTS_World);
+		FVector OutPosition;
+		FRotator OutRotation;
+		MazeHunterCharacter->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
+		LeftHandTransform.SetLocation(OutPosition);
+		LeftHandTransform.SetRotation(FQuat(OutRotation));
+	}
 }

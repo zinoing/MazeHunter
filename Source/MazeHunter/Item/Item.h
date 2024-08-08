@@ -62,5 +62,6 @@ private:
 	void OnRep_ItemState();
 public:
 	FORCEINLINE void SetItemState(EItemState State);
-	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }
+	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
+	FORCEINLINE USkeletalMeshComponent* GetItemMesh() const { return ItemMesh; }
 };

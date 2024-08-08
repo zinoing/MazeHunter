@@ -62,6 +62,12 @@ void AMazeHunterCharacter::OnRep_OverlappingItem(AItem* LastItem)
 	}
 }
 
+AItem* AMazeHunterCharacter::GetEquippedItem() const
+{
+	if (OnHand == nullptr) return nullptr;
+	return OnHand->EquippedItem;
+}
+
 void AMazeHunterCharacter::SetOverlappingItem(AItem* Item)
 {
 	if (OverlappingItem) {
