@@ -24,7 +24,7 @@ AMazeHunterCharacter::AMazeHunterCharacter() : BaseWalkSpeed(600.0f), AimWalkSpe
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	OnHand = CreateDefaultSubobject<UOnHandComponent>("OnHand");
@@ -74,6 +74,15 @@ void AMazeHunterCharacter::TurnInPlace(float DeltaTime)
 	}
 	else {
 		TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+	}
+
+	if (TurningInPlace != ETurningInPlace::ETIP_NotTurning) {
+		InterpAO_Yaw = FMath::FInterpTo(InterpAO_Yaw, 0.f, DeltaTime, 4.f);
+		AO_Yaw = InterpAO_Yaw;
+		if (FMath::Abs(AO_Yaw) < 15.f) {
+			TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+			StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		}
 	}
 }
 
@@ -175,6 +184,11 @@ void AMazeHunterCharacter::AimOffset(float DeltaTime)
 		FRotator CurrentAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
 		FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
 		AO_Yaw = DeltaAimRotation.Yaw;
+
+		if (TurningInPlace == ETurningInPlace::ETIP_NotTurning) {
+			InterpAO_Yaw = AO_Yaw;
+		}
+
 		bUseControllerRotationYaw = false;
 		TurnInPlace(DeltaTime);
 	}
