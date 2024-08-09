@@ -32,6 +32,7 @@ AMazeHunterCharacter::AMazeHunterCharacter() : BaseWalkSpeed(600.0f), AimWalkSpe
 	OnHand->Character = this;
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, 360.f);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 
@@ -123,7 +124,7 @@ void AMazeHunterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ThisClass::Jump);
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ThisClass::EquipButtonPressed);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ThisClass::CrouchButtonPressed);
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ThisClass::AimButtonPressed);
@@ -242,6 +243,16 @@ void AMazeHunterCharacter::Turn(float Value)
 void AMazeHunterCharacter::LookUp(float Value)
 {
 	AddControllerPitchInput(Value);
+}
+
+void AMazeHunterCharacter::Jump()
+{
+	if (bIsCrouched) {
+		UnCrouch();
+	}
+	else {
+		Super::Jump();
+	}
 }
 
 void AMazeHunterCharacter::Tick(float DeltaTime)
